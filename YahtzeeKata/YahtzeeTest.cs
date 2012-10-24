@@ -13,16 +13,6 @@ public class UntitledTest
     }
 
     [Test]
-    public void Yahtzee_scores_50() 
-    {
-        int expected = 50;
-        int actual = Yahtzee.yahtzee(4,4,4,4,4);
-        Assert.AreEqual(expected, actual);
-        Assert.AreEqual(50, Yahtzee.yahtzee(6,6,6,6,6));
-        Assert.AreEqual(0, Yahtzee.yahtzee(6,6,6,6,3));
-    }
-
-    [Test]
     public void Test_1s() {
         Assert.IsTrue(Yahtzee.Ones(1,2,3,4,5) == 1);
         Assert.AreEqual(2, Yahtzee.Ones(1,2,1,4,5));
@@ -65,6 +55,16 @@ public class UntitledTest
         Assert.AreEqual(0, new Yahtzee(4,4,4,5,5).sixes());
         Assert.AreEqual(6, new Yahtzee(4,4,6,5,5).sixes());
         Assert.AreEqual(18, new Yahtzee(6,5,6,6,5).sixes());
+    }
+
+    [Test]
+    public void Yahtzee_scores_50() 
+    {
+        int expected = 50;
+        int actual = Yahtzee.yahtzee(4,4,4,4,4);
+        Assert.AreEqual(expected, actual);
+        Assert.AreEqual(50, Yahtzee.yahtzee(6,6,6,6,6));
+        Assert.AreEqual(0, Yahtzee.yahtzee(6,6,6,6,3));
     }
 
     [Test]
