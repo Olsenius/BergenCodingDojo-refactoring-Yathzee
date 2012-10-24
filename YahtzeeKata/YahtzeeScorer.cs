@@ -1,12 +1,13 @@
+using System.Collections.Generic;
 using System.Linq;
 
 namespace YahtzeeKata
 {
-    public class Yahtzee
+    public class YahtzeeScorer
     {
         private readonly int[] _dice;
 
-        public Yahtzee(int d1, int d2, int d3, int d4, int d5)
+        public YahtzeeScorer(int d1, int d2, int d3, int d4, int d5)
         {
             _dice = new int[5];
             _dice[0] = d1;
@@ -85,42 +86,19 @@ namespace YahtzeeKata
             return 0;
         }
 
-        public static int FullHouse(int d1, int d2, int d3, int d4, int d5)
+        public int FullHouse()
         {
-            int[] tallies;
-            bool _2 = false;
-            int i;
-            int _2_at = 0;
-            bool _3 = false;
-            int _3_at = 0;
+            var groups = _dice.GroupBy(number => number);
+            var groupsWithCountOver2 = groups.Where(group => @group.Count() >= 2);
 
+            if (Has3And2Likes(groupsWithCountOver2))
+                return _dice.Sum();
+            return 0;
+        }
 
-
-            tallies = new int[6];
-            tallies[d1 - 1] += 1;
-            tallies[d2 - 1] += 1;
-            tallies[d3 - 1] += 1;
-            tallies[d4 - 1] += 1;
-            tallies[d5 - 1] += 1;
-
-            for (i = 0; i != 6; i += 1)
-                if (tallies[i] == 2)
-                {
-                    _2 = true;
-                    _2_at = i + 1;
-                }
-
-            for (i = 0; i != 6; i += 1)
-                if (tallies[i] == 3)
-                {
-                    _3 = true;
-                    _3_at = i + 1;
-                }
-
-            if (_2 && _3)
-                return _2_at * 2 + _3_at * 3;
-            else
-                return 0;
+        private static bool Has3And2Likes(IEnumerable<IGrouping<int, int>> groupsWithCountOver2)
+        {
+            return groupsWithCountOver2.Count() == 2 && groupsWithCountOver2.Any(x => x.Count() == 3);
         }
 
         public int Chance()
@@ -128,7 +106,7 @@ namespace YahtzeeKata
             return _dice.Sum();
         }
 
-        public int yahtzee()
+        public int Yahtzee()
         {
             return SumGroups(5) > 0 ? 50 : 0;
         }
@@ -140,15 +118,14 @@ namespace YahtzeeKata
 
         private int SumGroups(int groupSize, int numberOfGroups = 1)
         {
-            var groups = _dice
-                .GroupBy(number => number)
-                .Where(group => @group.Count() == groupSize);
+            var groups = _dice.GroupBy(number => number);
+            var groupsWithCorrectGroupSize = groups.Where(group => @group.Count() == groupSize);
 
-            if (groups.Count() >= numberOfGroups)
-                return groups
-                    .OrderByDescending(key => key.Key)
-                    .Take(numberOfGroups)
-                    .Sum(g => g.Key * groupSize);
+            if (groupsWithCorrectGroupSize.Count() >= numberOfGroups)
+                return groupsWithCorrectGroupSize
+                .OrderByDescending(key => key.Key)
+                .Take(numberOfGroups)
+                .Sum(g => g.Sum());
             return 0;
         }
     }
