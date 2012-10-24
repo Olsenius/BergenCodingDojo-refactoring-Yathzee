@@ -1,214 +1,155 @@
 using System.Linq;
 
-public class Yahtzee
+namespace YahtzeeKata
 {
-    protected int[] dice;
-    public Yahtzee(int d1, int d2, int d3, int d4, int _5)
+    public class Yahtzee
     {
-        dice = new int[5];
-        dice[0] = d1;
-        dice[1] = d2;
-        dice[2] = d3;
-        dice[3] = d4;
-        dice[4] = _5;
-    }
+        private readonly int[] _dice;
 
-    public static int Chance(int d1, int d2, int d3, int d4, int d5)
-    {
-        int total = 0;
-        total += d1;
-        total += d2;
-        total += d3;
-        total += d4;
-        total += d5;
-        return total;
-    }
+        public Yahtzee(int d1, int d2, int d3, int d4, int d5)
+        {
+            _dice = new int[5];
+            _dice[0] = d1;
+            _dice[1] = d2;
+            _dice[2] = d3;
+            _dice[3] = d4;
+            _dice[4] = d5;
+        }
 
-    public static int yahtzee(params int[] dice)
-    {
-        int[] counts = new int[6];
-        foreach (int die in dice)
-            counts[die - 1]++;
-        for (int i = 0; i != 6; i++)
-            if (counts[i] == 5)
-                return 50;
-        return 0;
-    }
+        public int Ones()
+        {
+            return OfANumber(1);
+        }
 
-    public static int Ones(int d1, int d2, int d3, int d4, int d5)
-    {
-        return Sum(new[] { d1, d2, d3, d4, d5 }, 1);
-    }
+        public int Twos()
+        {
+            return OfANumber(2);
+        }
 
-    private static int Sum(int[] numbers, int target)
-    {
-        return numbers.Count(x => x == target) * target;
-    }
+        public int Threes()
+        {
+            return OfANumber(3);
+        }
 
-    public static int Twos(int d1, int d2, int d3, int d4, int d5)
-    {
-        return Sum(new[] { d1, d2, d3, d4, d5 }, 2);
-    }
+        public int Fours()
+        {
+            return OfANumber(4);
+        }
 
-    public static int Threes(int d1, int d2, int d3, int d4, int d5)
-    {
-        return Sum(new[] { d1, d2, d3, d4, d5 }, 3);
-    }
+        public int Fives()
+        {
+            return OfANumber(5);
+        }
 
-    public int Fours()
-    {
-        return Sum(dice, 4);
-    }
+        public int Sixes()
+        {
+            return OfANumber(6);
+        }
 
-    public int Fives()
-    {
-        return Sum(dice, 5);
-    }
+        public int ScorePair()
+        {
+            return SumGroups(2);
+        }
 
-    public int sixes()
-    {
-        return Sum(dice, 6);
-    }
+        public int TwoPair()
+        {
+            return SumGroups(2, 2);
+        }
 
-    public static int ScorePair(int d1, int d2, int d3, int d4, int d5)
-    {
-        int[] counts = new int[6];
-        counts[d1 - 1]++;
-        counts[d2 - 1]++;
-        counts[d3 - 1]++;
-        counts[d4 - 1]++;
-        counts[d5 - 1]++;
-        int at;
-        for (at = 0; at != 6; at++)
-            if (counts[6 - at - 1] == 2)
-                return (6 - at) * 2;
-        return 0;
-    }
+        public int ThreeOfAKind()
+        {
+            return SumGroups(3);
+        }
 
-    public static int TwoPair(int d1, int d2, int d3, int d4, int d5)
-    {
-        int[] counts = new int[6];
-        counts[d1 - 1]++;
-        counts[d2 - 1]++;
-        counts[d3 - 1]++;
-        counts[d4 - 1]++;
-        counts[d5 - 1]++;
-        int n = 0;
-        int score = 0;
-        for (int i = 0; i < 6; i += 1)
-            if (counts[6 - i - 1] == 2)
-            {
-                n++;
-                score += (6 - i);
-            }
-        if (n == 2)
-            return score * 2;
-        else
+        public int FourOfAKind()
+        {
+            return SumGroups(4);
+        }
+
+        public int SmallStraight()
+        {
+            return ScoreStraight(new[] { 1, 2, 3, 4, 5 });
+        }
+
+        public int LargeStraight()
+        {
+            return ScoreStraight(new[] { 2, 3, 4, 5, 6 });
+        }
+
+        private int ScoreStraight(int[] straight)
+        {
+            var sortedNumbers = _dice.OrderBy(x => x).ToArray();
+
+            if (sortedNumbers.SequenceEqual(straight))
+                return straight.Sum();
             return 0;
-    }
+        }
 
-    public static int FourOfAKind(int _1, int _2, int d3, int d4, int d5)
-    {
-        int[] tallies;
-        tallies = new int[6];
-        tallies[_1 - 1]++;
-        tallies[_2 - 1]++;
-        tallies[d3 - 1]++;
-        tallies[d4 - 1]++;
-        tallies[d5 - 1]++;
-        for (int i = 0; i < 6; i++)
-            if (tallies[i] == 4)
-                return (i + 1) * 4;
-        return 0;
-    }
-
-    public static int ThreeOfAKind(int d1, int d2, int d3, int d4, int d5)
-    {
-        int[] t;
-        t = new int[6];
-        t[d1 - 1]++;
-        t[d2 - 1]++;
-        t[d3 - 1]++;
-        t[d4 - 1]++;
-        t[d5 - 1]++;
-        for (int i = 0; i < 6; i++)
-            if (t[i] == 3)
-                return (i + 1) * 3;
-        return 0;
-    }
-
-    public static int SmallStraight(int d1, int d2, int d3, int d4, int d5)
-    {
-        int[] tallies;
-        tallies = new int[6];
-        tallies[d1 - 1] += 1;
-        tallies[d2 - 1] += 1;
-        tallies[d3 - 1] += 1;
-        tallies[d4 - 1] += 1;
-        tallies[d5 - 1] += 1;
-        if (tallies[0] == 1 &&
-            tallies[1] == 1 &&
-            tallies[2] == 1 &&
-            tallies[3] == 1 &&
-            tallies[4] == 1)
-            return 15;
-        return 0;
-    }
-
-    public static int LargeStraight(int d1, int d2, int d3, int d4, int d5)
-    {
-        int[] tallies;
-        tallies = new int[6];
-        tallies[d1 - 1] += 1;
-        tallies[d2 - 1] += 1;
-        tallies[d3 - 1] += 1;
-        tallies[d4 - 1] += 1;
-        tallies[d5 - 1] += 1;
-        if (tallies[1] == 1 &&
-            tallies[2] == 1 &&
-            tallies[3] == 1 &&
-            tallies[4] == 1
-            && tallies[5] == 1)
-            return 20;
-        return 0;
-    }
-
-    public static int FullHouse(int d1, int d2, int d3, int d4, int d5)
-    {
-        int[] tallies;
-        bool _2 = false;
-        int i;
-        int _2_at = 0;
-        bool _3 = false;
-        int _3_at = 0;
+        public static int FullHouse(int d1, int d2, int d3, int d4, int d5)
+        {
+            int[] tallies;
+            bool _2 = false;
+            int i;
+            int _2_at = 0;
+            bool _3 = false;
+            int _3_at = 0;
 
 
 
+            tallies = new int[6];
+            tallies[d1 - 1] += 1;
+            tallies[d2 - 1] += 1;
+            tallies[d3 - 1] += 1;
+            tallies[d4 - 1] += 1;
+            tallies[d5 - 1] += 1;
 
-        tallies = new int[6];
-        tallies[d1 - 1] += 1;
-        tallies[d2 - 1] += 1;
-        tallies[d3 - 1] += 1;
-        tallies[d4 - 1] += 1;
-        tallies[d5 - 1] += 1;
+            for (i = 0; i != 6; i += 1)
+                if (tallies[i] == 2)
+                {
+                    _2 = true;
+                    _2_at = i + 1;
+                }
 
-        for (i = 0; i != 6; i += 1)
-            if (tallies[i] == 2)
-            {
-                _2 = true;
-                _2_at = i + 1;
-            }
+            for (i = 0; i != 6; i += 1)
+                if (tallies[i] == 3)
+                {
+                    _3 = true;
+                    _3_at = i + 1;
+                }
 
-        for (i = 0; i != 6; i += 1)
-            if (tallies[i] == 3)
-            {
-                _3 = true;
-                _3_at = i + 1;
-            }
+            if (_2 && _3)
+                return _2_at * 2 + _3_at * 3;
+            else
+                return 0;
+        }
 
-        if (_2 && _3)
-            return _2_at * 2 + _3_at * 3;
-        else
+        public int Chance()
+        {
+            return _dice.Sum();
+        }
+
+        public int yahtzee()
+        {
+            return SumGroups(5) > 0 ? 50 : 0;
+        }
+
+        private int OfANumber(int target)
+        {
+            return _dice.Count(x => x == target) * target;
+        }
+
+        private int SumGroups(int groupSize, int numberOfGroups = 1)
+        {
+            var groups = _dice
+                .GroupBy(number => number)
+                .Where(group => @group.Count() == groupSize);
+
+            if (groups.Count() >= numberOfGroups)
+                return groups
+                    .OrderByDescending(key => key.Key)
+                    .Take(numberOfGroups)
+                    .Sum(g => g.Key * groupSize);
             return 0;
+        }
     }
 }
